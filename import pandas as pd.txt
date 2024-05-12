@@ -1,0 +1,143 @@
+import pandas as pd
+dataset = pd.read_csv(r"C:\Users\USER\Desktop\BankChurn.csv")
+dataset.head()
+dataset.isnull().sum()
+import matplotlib.pyplot as plt
+# Load your dataset
+# Replace 'your_dataset.csv' with the path to your dataset
+df = dataset
+# Create a heatmap of missing values
+plt.figure(figsize=(10, 6))
+plt.title('Missing Value Visualization')
+plt.imshow(df.isnull(), cmap='viridis', aspect='auto')
+plt.colorbar()
+plt.xlabel('Features')
+plt.ylabel('Rows')
+plt.show()
+age_bins = [0, 20, 30, 40, 50, 60, 70, 80]
+age_labels = ['0-20', '21-30', '31-40', '41-50', '51-60', '61-70', '71-80']
+df['Age_Group'] = pd.cut(df['Age'], bins=age_bins, labels=age_labels)
+# Group by age group and churn status, and calculate percentages
+grouped = df.groupby(['Age_Group', 'Exited']).size().unstack()
+grouped['Total'] = grouped.sum(axis=1)
+grouped['Churn_Percentage'] = (grouped[1] / grouped['Total']) * 100
+grouped['Non_Churn_Percentage'] = (grouped[0] / grouped['Total']) * 100
+# Plot the bar plot
+grouped[['Churn_Percentage', 'Non_Churn_Percentage']].plot(kind='bar', stacked=True)
+plt.title('Percentage of Churners and Non-Churners by Age Group')
+plt.xlabel('Age Group')
+plt.ylabel('Percentage')
+plt.xticks(rotation=45)
+plt.legend(title='Exited', labels=['Churners', 'Non-Churners'])
+plt.show()
+# Perform the Shapiro-Wilk test for normality
+statistic, p_value = shapiro(age_data)
+# Print the test result
+print("Shapiro-Wilk Test Result:")
+print("Statistic:", statistic)
+print("p-value:", p_value)
+# Interpret the result
+alpha = 0.05
+if p_value > alpha:
+    print("The Age variable appears to be normally distributed (fail to reject H0)")
+else:
+    print("The Age variable does not appear to be normally distributed (reject H0)")
+import matplotlib.pyplot as plt
+
+# Load your dataset
+# Replace 'your_dataset.csv' with the path to your dataset
+df = dataset
+
+# Filter churners and non-churners
+churners = df[df['Exited'] == 1]
+non_churners = df[df['Exited'] == 0]
+
+# Count the number of churners and non-churners for each rating category
+churners_count = churners['Rating'].value_counts()
+non_churners_count = non_churners['Rating'].value_counts()
+
+# Plot pie chart for churners
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
+plt.pie(churners_count, labels=churners_count.index, autopct='%1.1f%%', startangle=140)
+plt.title('Churners by Rating')
+
+# Plot pie chart for non-churners
+plt.subplot(1, 2, 2)
+plt.pie(non_churners_count, labels=non_churners_count.index, autopct='%1.1f%%', startangle=140)
+plt.title('Non-Churners by Rating')
+
+plt.tight_layout()
+plt.show()
+import numpy as np
+df = dataset
+
+
+product_counts = df.groupby(['NumOfProducts', 'Exited']).size().unstack()
+
+# Plot the grouped bar chart
+labels = product_counts.index
+width = 0.35
+x = np.arange(len(labels))
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width/2, product_counts[0], width, label='Non-Churners')
+rects2 = ax.bar(x + width/2, product_counts[1], width, label='Churners')
+
+ax.set_xlabel('Product')
+ax.set_ylabel('Count')
+ax.set_title('Count of Products Purchased by Churners and Non-Churners')
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.legend()
+
+plt.xticks(rotation=45)
+plt.show()
+df = dataset
+
+# Create separate DataFrame for churners and non-churners
+churners = df[df['Exited'] == 1]
+non_churners = df[df['Exited'] == 0]
+
+# Plot box plot for churners and non-churners
+plt.figure(figsize=(8, 6))
+plt.boxplot([churners['CreditScore'], non_churners['CreditScore']], labels=['Churners', 'Non-Churners'])
+plt.title('Box Plot of Credit Score for Churners and Non-Churners')
+plt.xlabel('Customer Type')
+plt.ylabel('Credit Score')
+plt.grid(True)
+plt.show()
+# Filter churners and non-churners
+churners = df[df['Exited'] == 1]
+non_churners = df[df['Exited'] == 0]
+
+# Count the number of each gender for churners and non-churners
+churner_gender_counts = churners['Gender'].value_counts()
+non_churner_gender_counts = non_churners['Gender'].value_counts()
+
+# Plot pie chart for churners
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
+plt.pie(churner_gender_counts, labels=churner_gender_counts.index, autopct='%1.1f%%', startangle=140)
+plt.title('Gender Distribution among Churners')
+
+# Plot pie chart for non-churners
+plt.subplot(1, 2, 2)
+plt.pie(non_churner_gender_counts, labels=non_churner_gender_counts.index, autopct='%1.1f%%', startangle=140)
+plt.title('Gender Distribution among Non-Churners')
+plt.tight_layout()
+plt.show()
+# Define the columns for which you want to create histograms
+columns = ['Age', 'CreditScore', 'EstimatedSalary', 'Balance']
+
+# Plot histograms for each column
+plt.figure(figsize=(12, 8))
+for i, column in enumerate(columns, start=1):
+    plt.subplot(2, 2, i)
+    plt.hist(df[column], bins=20, color='skyblue', edgecolor='black')
+    plt.title(f'Histogram of {column}')
+    plt.xlabel(column)
+    plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
